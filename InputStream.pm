@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+#turn a string into a stream of chars
 package InputStream;
 
 #constructor, make input the slurped arguments
@@ -40,6 +41,14 @@ sub eof {
 sub error {
     my ($self, $msg) = @_;
     return $msg." (".$self->{line}.":".$self->{col}.")";
+}
+
+#reset to top of stream
+sub reset {
+    $self->{pos} = 0;
+    $self->{line} = 1;
+    $self->{line} = 0;
+    1;
 }
 
 #define a charAt func
