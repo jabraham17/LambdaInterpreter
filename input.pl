@@ -16,9 +16,7 @@ my $input = new InputStream(<STDIN>);
 my $lexer = new Lexer($input);
 
 
-print "|".$lexer->next->str."|\n";
-print "|".$lexer->next->str."|\n";
-print "|".$lexer->next->str."|\n";
-print "|".$lexer->next->str."|\n";
-print "|".$lexer->next->str."|\n";
+while(!$lexer->eof) {
+    print $lexer->next->str."\n";
+}
 

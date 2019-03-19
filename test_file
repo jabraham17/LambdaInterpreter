@@ -2,7 +2,10 @@
 
 1942
 78.2
+#another comment
 98.2 0.99 1.99
+"Test"
+"Extar \"test\""
 
 println("Hello World!");
 

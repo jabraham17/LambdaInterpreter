@@ -21,9 +21,9 @@ my $keyword = ' (if|then|else|lambda|true|false) ';
 my $whitespace = '\s';
 my $digit = '[0-9]';
 my $id_start = '[a-zA-Z_]';
-my $id = $start.'|'.$digit;
-my $op = '+-*/%=&|<>!';
-my $punc = ',;(){}[]';
+my $id = $id_start.'|'.$digit;
+my $op = '[\+\-\*\/%=&\|<>!]';
+my $punc = '[,;\(\){}\[\]]';
 
 #read from the in stream until the regex is false
 sub read_while {
@@ -35,10 +35,45 @@ sub read_while {
     return $str;
 }
 
+#read a str
+sub read_string() {
+    #if a char is escaped, such as a quote, we dont want it ending the loop early
+    my $escaped = 0;
+    my $str = '';
+    my $end = "\"";
+    
+    #discard the inital char
+    $self->{instr}->next();
+    while(!$self->{instr}->eof) {
+        my $ch = $self->{instr}->next;
+        if($escaped) {
+            $str .= $ch;
+            $escaped = 0;
+        }
+        elsif($ch eq '\\') {
+            $escaped = 1;
+        }
+        elsif($ch eq $end) {
+            last;
+        }
+        else {
+            $str .= $ch;
+        }
+    }
+    return new Token("str", $str);
+}
+
 #read a number
 sub read_number {
     my $num = read_while($digit.'|\.');
     return new Token("num", $num);
+}
+
+# read an identifier
+sub read_id() {
+    my $identifier = read_while($id);
+    # check if the identifer is a keyword, if it is mark it as such
+    return new Token($identifier =~ /$keyword/ ? "kw" : "var", $identifier);
 }
 
 #return the next token
@@ -46,7 +81,7 @@ sub read_next() {
     #read extra whitespace and discard it
     &read_while($whitespace);
     #return undef if end of file
-    if ($self->{instr}->eof) {return undef;}
+    if($self->{instr}->eof) {return undef;}
     #peek the next char, used to determine what to do
     my $ch = $self->{instr}->peek;
 
@@ -55,10 +90,27 @@ sub read_next() {
         &read_while('[^\n]');
         return &read_next;
     }
+    #if its a string, read the string
+    if($ch eq '"') {
+        return &read_string;
+    }
     # if its a number, read the number
     if($ch =~ /$digit/) {
         return &read_number;
     }
+
+    if($ch =~ /$id_start/) {
+        return &read_id;
+    }
+    # if its punctuation, wrap it in token and return it
+    if($ch =~ /$punc/) {
+        return new Token("punc", $self->{instr}->next);
+    }
+    # if its an operator, read the while operator and return it
+    if($ch =~ /$op/) {
+        return new Token("op", &read_while($op));
+    }
+    die $self->{instr}->error("Can't handle character: $ch");
 }
 
 #peek the next token
