@@ -85,6 +85,9 @@ sub read_next() {
     #peek the next char, used to determine what to do
     my $ch = $self->{instr}->peek;
 
+    #if nothing was read, return undef
+    if($ch eq '') {return undef;}
+
     #if its a comment, skip the comment and try again
     if($ch eq "#") {
         &read_while('[^\n]');
@@ -110,7 +113,6 @@ sub read_next() {
     if($ch =~ /$op/) {
         return new Token("op", &read_while($op));
     }
-    # eof never happening, always dieing
     die $self->{instr}->error("Can't handle character: $ch");
 }
 
@@ -136,7 +138,7 @@ sub next {
 }
 #check for the end of the file
 sub eof {
-    return !defined &peek;
+    return !defined &peek || &peek eq '';
 }
 
 1;
