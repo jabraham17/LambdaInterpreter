@@ -110,6 +110,7 @@ sub read_next() {
     if($ch =~ /$op/) {
         return new Token("op", &read_while($op));
     }
+    # eof never happening, always dieing
     die $self->{instr}->error("Can't handle character: $ch");
 }
 
