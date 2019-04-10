@@ -31,7 +31,7 @@ sub set_value {
 
 #convert this token to a string represenattion
 sub str {
-    return "{ type: ".$self->{type}.", value: ".$self->{value}." }";
+    return "{type:".$self->{type}.",value:".$self->{value}."}";
 }
 
 1;

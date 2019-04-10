@@ -17,7 +17,7 @@ sub new {
 }
 
 #define my regexs
-my $keyword = ' (if|then|else|lambda|true|false) ';
+my $keyword = '(if|then|else|lambda|true|false)';
 my $whitespace = '\s';
 my $digit = '[0-9]';
 my $id_start = '[a-zA-Z_]';
@@ -139,6 +139,12 @@ sub next {
 #check for the end of the file
 sub eof {
     return !defined &peek || &peek eq '';
+}
+
+#return error message
+sub error {
+    my ($self, $msg) = @_;
+    return $self->{instr}->error($msg);
 }
 
 1;

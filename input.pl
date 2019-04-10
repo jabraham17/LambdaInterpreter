@@ -3,15 +3,42 @@
 use InputStream;
 use Lexer;
 use Token;
+use ASTNode;
+use Parser;
 use feature qw\say\;
 use Data::Dumper;
 
-my $input = new InputStream(<STDIN>);
+my $parser = new Parser(new Lexer(new InputStream(<>)));
 
-my $lexer = new Lexer($input);
+$ast = $parser->parse;
 
-while(!($lexer->eof)) {
-    $check = $lexer->next;
-    say $check->str;
-}
+# while(!($lexer->eof)) {
+#     say $lexer->next->str;
+# }
 
+
+# my @nodes = ();
+# $ast1 = new ASTNode("prog");
+# push @nodes, $ast1;
+
+# $ast2 = new ASTNode("num");
+# $ast2->setValue("value", 5);
+# push @nodes, $ast2;
+
+# $ast3 = new ASTNode("if");
+# $ast3->setValue("cond", new ASTNode("var", {"value", "foo"}));
+# $ast3->setValue("then", new ASTNode("var", {"value", "bar"}));
+# push @nodes, $ast3;
+
+# $ast4 = new ASTNode("lambda", {"vars" => ["x", "y"], "body" => $ast2});
+# push @nodes, $ast4;
+
+# $ast5 = new ASTNode("expr");
+# $ast5->setValue("expressions", [$ast3, $ast4, ["B", "A"]]);
+# push @nodes, $ast5;
+
+# #say Dumper(@nodes);
+
+# foreach (@nodes) {
+#     say $_->pretty_str;
+# }
