@@ -12,6 +12,8 @@ my $parser = new Parser(new Lexer(new InputStream(<>)));
 
 $ast = $parser->parse;
 
+say $ast->pretty_str;
+
 # while(!($lexer->eof)) {
 #     say $lexer->next->str;
 # }

@@ -5,6 +5,7 @@ use ASTNode;
 #turn a stream of tokens into an AST
 package Parser;
 
+use feature qw\say\;
 use Data::Dumper;
 
 #constructor, requires a valid Lexer
@@ -45,7 +46,7 @@ sub skip_kind {
     # return it if ok
     return $self->{lexer}->next if is_kind($kind, $ch);
 
-    print "$kind $ch\n";
+    #print "$kind $ch\n";
 
     #failure
     die &unexpected($self->{lexer}->peek)
@@ -65,9 +66,12 @@ sub delimited {
     while(!($self->{lexer}->eof)) {
 
         # if end, done
-        last if is_kind("punc", $stop);
+        last if &is_kind("punc", $stop);
+
         # if its the first item, no need to skip punctionation, otherwise need to skip punctutaion
         &skip_kind("punc", $separator) if --$first;
+
+        last if &is_kind("punc", $stop);
 
         # add our parsed item to the list
         push @items, &$parser;
@@ -86,11 +90,11 @@ sub parse() {
     while(!($self->{lexer}->eof)) {
         # parse each expression and add them to the list
         push @prog, &parse_expression;
-        print $prog[-1]->pretty_str."\n";
+        #print $prog[-1]->pretty_str."\n";
         # every statment must end with the seprator
         &skip_kind("punc", ";");
     }
-    return new ASTNode("prog", {"prog" => @prog});
+    return new ASTNode("prog", {"prog" => \@prog});
 }
 
 # parse a variable name
@@ -110,10 +114,10 @@ sub parse_if() {
     # define our if node
     $ifnode = new ASTNode("if");
     # get the condition
-    print("Error1\n");
+    #print("Error1\n");
     $ifnode->setValue("cond", &parse_expression);
 
-    print($ifnode->getValue("cond")->pretty_str."\n");
+    #print($ifnode->getValue("cond")->pretty_str."\n");
 
     
     # then keyword is required, we just skip it
@@ -154,7 +158,7 @@ sub parse_atom {
         # the follwoing are pretty self expanotry
         # note they dont eat the kw
         return &parse_prog if is_kind("punc", "{");
-        print $self->{lexer}->peek->str."\n";
+        # $self->{lexer}->peek->str."\n";
         return &parse_if if is_kind("kw", "if");
         return &parse_bool if is_kind("kw", "true") or is_kind("kw", "false");
 
@@ -219,7 +223,7 @@ sub maybe_binary {
         #get op precendence
         my $op_prec = $op_precedence{$token->get_value};
         if ($op_prec > $prec) {
-            print "T".$token->str."\n" if ref $token eq "Token";
+            #print "T".$token->str."\n" if ref $token eq "Token";
             # throw away next 
             $self->{lexer}->next;
             # if assignment, mark as such

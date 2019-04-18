@@ -93,7 +93,6 @@ sub str {
     
     # get the str of each item and put it in a list
     while(my ($k, $v) = each(%{$self->{info}})) {
-    #foreach $k (keys %{$self->{info}}) {
         my $new_item = "\"$k\":";
         my $ref_type = ref $v;
 
