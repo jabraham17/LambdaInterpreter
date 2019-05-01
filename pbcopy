@@ -1,1 +1,0 @@
-{ type: expr, expressions: [ { type: if, then: { type: var, value: bar }, cond: { type: var, value: foo } }, { type: lambda, vars: [ x, y ], body: { type: num, value: 5 } }, [ B, A ] ] }
